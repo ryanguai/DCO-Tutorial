@@ -10,11 +10,22 @@ import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import withStyles from '@mui/material/styles/withStyles';
 import Container from '@mui/material/Container';
 import CircularProgress from '@mui/material/CircularProgress';
+import { createTheme } from '@mui/material/styles';
 
 import axios from 'axios';
+
+const theme = createTheme({
+    palette: {
+    		primary: {
+    			light: '#33c9dc',
+    			main: '#FF5722',
+    			dark: '#d50000',
+    			contrastText: '#fff'
+    		}
+    	}
+   });
 
 const styles = (theme) => ({
 	paper: {
@@ -98,16 +109,22 @@ class login extends Component {
 		const { classes } = this.props;
 		const { errors, loading } = this.state;
 		return (
-			<Container component="main" maxWidth="xs">
-				<CssBaseline />
+			<Container component="main" maxWidth="xs" sx={{marginTop: theme.spacing(8),
+                                                                                		display: 'flex',
+                                                                                		flexDirection: 'row',
+                                                                                		alignItems: 'center',
+
+                                                                            }}>
 				<div>
-					<Avatar>
+					<Avatar sx={{marginLeft: theme.spacing(20),
+                                 		backgroundColor: theme.palette.secondary.main}}>
 						<LockOutlinedIcon />
 					</Avatar>
-					<Typography component="h1" variant="h5">
+					<Typography sx={{marginLeft: theme.spacing(19), marginTop: theme.spacing(2)}} component="h1" variant="h5">
 						Login
 					</Typography>
-					<form noValidate>
+					<form sx={{width: '100%',
+                               		marginTop: theme.spacing(1)}} noValidate>
 						<TextField
 							variant="outlined"
 							margin="normal"
@@ -138,6 +155,7 @@ class login extends Component {
 						/>
 						<Button
 							type="submit"
+							sx={{margin: theme.spacing(3, 0, 2)}}
 							fullWidth
 							variant="contained"
 							color="primary"
@@ -145,7 +163,7 @@ class login extends Component {
 							disabled={loading || !this.state.email || !this.state.password}
 						>
 							Sign In
-							{loading && <CircularProgress size={30}  />}
+							{loading && <CircularProgress size={30} sx={{position: 'absolute'}}  />}
 						</Button>
 						<Grid container>
 							<Grid item>
@@ -155,7 +173,9 @@ class login extends Component {
 							</Grid>
 						</Grid>
 						{errors.general && (
-							<Typography variant="body2" >
+							<Typography variant="body2" sx={{color: 'red',
+                                                             		fontSize: '0.8rem',
+                                                             		marginTop: 10}} >
 								{errors.general}
 							</Typography>
 						)}
