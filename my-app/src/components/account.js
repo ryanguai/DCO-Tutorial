@@ -6,8 +6,7 @@ import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { Card, CardActions, CardContent, Divider, Button, Grid, TextField } from '@mui/material';
-
-import clsx from 'clsx';
+import FormData from 'form-data';
 
 import axios from 'axios';
 import { authMiddleWare } from '../util/auth';
@@ -39,7 +38,8 @@ class account extends Component {
 			profilePicture: '',
 			uiLoading: true,
 			buttonLoading: false,
-			imageError: ''
+			imageError: '',
+			image: null
 		};
 	}
 
@@ -80,6 +80,7 @@ class account extends Component {
 		this.setState({
 			image: event.target.files[0]
 		});
+		console.log(this.state.image);
 	};
 
 	profilePictureHandler = (event) => {
@@ -91,12 +92,13 @@ class account extends Component {
 		const authToken = localStorage.getItem('AuthToken');
 		let form_data = new FormData();
 		form_data.append('image', this.state.image);
-		form_data.append('content', this.state.content);
 		axios.defaults.headers.common = { Authorization: `${authToken}` };
 		axios
 			.post('/user/image', form_data, {
 				headers: {
-					'content-type': 'multipart/form-data'
+				    'accept': 'application/json',
+                     'Accept-Language': 'en-US,en;q=0.8',
+                     'Content-Type': `multipart/form-data; boundary=${form_data._boundary}`,
 				}
 			})
 			.then(() => {
@@ -285,7 +287,7 @@ class account extends Component {
 						color="primary"
 						variant="contained"
 						type="submit"
-						sx={{marginTop: '10px'}}
+						sx={{marginLeft: '150px'}}
 						onClick={this.updateFormValues}
 						disabled={
 							this.state.buttonLoading ||

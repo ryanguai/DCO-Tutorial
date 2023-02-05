@@ -115,28 +115,28 @@ deleteImage = (imageName) => {
 
 // Upload profile picture
 exports.uploadProfilePhoto = (request, response) => {
-    const BusBoy = require('busboy');
 	const path = require('path');
 	const os = require('os');
 	const fs = require('fs');
-	const busboy = BusBoy({ headers: request.headers });
+	const busboy = require("busboy");
+    const bb = busboy({ headers: request.headers });
 
 	let imageFileName;
 	let imageToBeUploaded = {};
 
-	busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-	    console.log(`File [${fieldname}]: filename: ${filename}, encoding: ${encoding}, mimetype: ${mimetype}`);
+	bb.on('file', (fieldname, file, filename) => {
+	    const mimetype = filename.mimeType;
 	    if (mimetype !== 'image/png' && mimetype !== 'image/jpeg') {
-			return response.status(400).json({ error: "Wrong file type submitted" });
+			return response.status(400).json({ error: "Wrong file type submitted"});
 		}
-		const imageExtension = filename.split('.')[filename.split('.').length - 1];
+		const imageExtension = filename.filename.split('.')[filename.filename.split('.').length - 1];
         imageFileName = `${request.user.username}.${imageExtension}`;
 		const filePath = path.join(os.tmpdir(), imageFileName);
 		imageToBeUploaded = { filePath, mimetype };
 		file.pipe(fs.createWriteStream(filePath));
     });
     deleteImage(imageFileName);
-	busboy.on('finish', () => {
+	bb.on('finish', () => {
 		admin
 			.storage()
 			.bucket()
@@ -162,7 +162,7 @@ exports.uploadProfilePhoto = (request, response) => {
 				return response.status(500).json({ error: error.code });
 			});
 	});
-	busboy.end(request.rawBody);
+	bb.end(request.rawBody);
 };
 
 exports.getUserDetail = (request, response) => {
